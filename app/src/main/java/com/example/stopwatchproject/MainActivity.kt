@@ -1,6 +1,8 @@
 package com.example.stopwatchproject
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,6 +19,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.stopwatchproject.stopwatch.StopwatchService
 import com.example.stopwatchproject.ui.theme.StopwatchProjectTheme
 
@@ -24,6 +28,8 @@ import com.example.stopwatchproject.ui.theme.StopwatchProjectTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        checkNotificationPermission()
 
         val viewModel = StopwatchViewModel(StopwatchStateFlowRepository)
 
@@ -45,6 +51,27 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun checkNotificationPermission() {
+        // Check and request notification permissions for Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    REQUEST_CODE_NOTIFICATIONS
+                )
+            }
+        }
+    }
+
+    companion object {
+        const val REQUEST_CODE_NOTIFICATIONS = 1001
     }
 }
 
