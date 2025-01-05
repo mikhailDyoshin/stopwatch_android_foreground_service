@@ -1,8 +1,11 @@
 package com.example.stopwatchproject.stopwatch
 
+import android.app.ForegroundServiceStartNotAllowedException
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
+import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
@@ -12,7 +15,9 @@ import android.os.Process.THREAD_PRIORITY_BACKGROUND
 import android.widget.Toast
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.app.ServiceCompat
 import com.example.stopwatchproject.StopwatchNotificationManager
+import com.example.stopwatchproject.StopwatchNotificationManager.Companion.NOTIFICATION_ID
 import com.example.stopwatchproject.StopwatchStateFlowRepository
 import com.example.stopwatchproject.common.createServiceLog
 
@@ -27,6 +32,28 @@ class StopwatchService : Service() {
 
     private val _timeState = mutableLongStateOf(0L)
 
+    private fun startForeground() {
+
+        try {
+            val notification = stopwatchNotificationManager?.getNotificationBuilder()?.build()
+
+            if (notification != null) {
+                ServiceCompat.startForeground(
+                    this,
+                    NOTIFICATION_ID,
+                    notification,
+                    FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
+                )
+            }
+        } catch (e: Exception) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                && e is ForegroundServiceStartNotAllowedException
+            ) {
+                Toast.makeText(this, "Can't start service", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     // Handler that receives messages from the thread
     private inner class ServiceHandler(looper: Looper) : Handler(looper) {
 
@@ -34,6 +61,7 @@ class StopwatchService : Service() {
             try {
                 stopwatchNotificationManager?.setUpNotification()
                 setIsRunningValue(true)
+                startForeground()
                 incrementTime()
             } catch (e: InterruptedException) {
                 // Restore interrupt status.

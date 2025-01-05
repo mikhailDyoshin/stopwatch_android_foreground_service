@@ -1,5 +1,6 @@
 package com.example.stopwatchproject
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -20,13 +21,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
-import androidx.core.app.ServiceCompat.startForeground
 import androidx.core.content.ContextCompat
 import com.example.stopwatchproject.stopwatch.StopwatchService
 import com.example.stopwatchproject.ui.theme.StopwatchProjectTheme
 
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -43,7 +44,8 @@ class MainActivity : ComponentActivity() {
                         state = viewModel.state.collectAsState().value,
                         modifier = Modifier.padding(innerPadding),
                         startService = {
-                            startService(Intent(this, StopwatchService::class.java))
+                            val intent = Intent(this, StopwatchService::class.java)
+                            this.startForegroundService(intent)
                         },
                         stopService = {
                             stopService(Intent(this, StopwatchService::class.java))

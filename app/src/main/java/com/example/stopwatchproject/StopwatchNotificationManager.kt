@@ -23,13 +23,14 @@ class StopwatchNotificationManager(
 
     fun updateNotification(timeValue: Long) {
         notificationBuilder.setContentTitle("Elapsed time: $timeValue s.")
-        displayNotification()
+        updateNotification()
     }
 
     fun cancel() {
         notificationManager.cancel(NOTIFICATION_ID)
     }
 
+    fun getNotificationBuilder() = notificationBuilder
 
     private fun createActionIntent(action: StopwatchNotificationAction): PendingIntent {
         return PendingIntent.getService(
@@ -52,7 +53,7 @@ class StopwatchNotificationManager(
         }
     }
 
-    private fun displayNotification() {
+    private fun updateNotification() {
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
     }
 
@@ -67,11 +68,11 @@ class StopwatchNotificationManager(
             .addAction(R.drawable.ic_launcher_foreground, "Stop", stopIntent)
             .setPriority(NotificationCompat.PRIORITY_LOW)
 
-        displayNotification()
+        updateNotification()
     }
 
     companion object {
-        private const val NOTIFICATION_ID = 123
+        const val NOTIFICATION_ID = 123
         private const val CHANNEL_ID = "PlaybackServiceChannel"
     }
 
