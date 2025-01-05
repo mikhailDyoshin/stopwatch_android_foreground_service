@@ -21,6 +21,11 @@ class StopwatchNotificationManager(
         createNotification()
     }
 
+    fun updateNotification(timeValue: Long) {
+        notificationBuilder.setContentTitle("Elapsed time: $timeValue s.")
+        displayNotification()
+    }
+
     fun cancel() {
         notificationManager.cancel(NOTIFICATION_ID)
     }
@@ -47,18 +52,22 @@ class StopwatchNotificationManager(
         }
     }
 
-    private fun createNotification() {
+    private fun displayNotification() {
+        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
+    }
+
+    private fun createNotification(timeValue: Long = 0L) {
         val stopIntent =
             createActionIntent(action = StopwatchNotificationAction.ACTION_STOP)
 
         notificationBuilder
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setContentTitle("Timer")
+            .setContentTitle("Elapsed time: $timeValue s.")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .addAction(R.drawable.ic_launcher_foreground, "Stop", stopIntent)
             .setPriority(NotificationCompat.PRIORITY_LOW)
 
-        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
+        displayNotification()
     }
 
     companion object {

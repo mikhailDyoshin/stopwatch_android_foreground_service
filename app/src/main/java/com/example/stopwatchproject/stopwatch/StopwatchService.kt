@@ -37,6 +37,10 @@ class StopwatchService : Service() {
                 incrementTime()
             } catch (e: InterruptedException) {
                 // Restore interrupt status.
+                createServiceLog(
+                    context = context,
+                    message = "Exception occurred: $e"
+                )
                 Thread.currentThread().interrupt()
             }
         }
@@ -102,6 +106,7 @@ class StopwatchService : Service() {
         while (isRunning.value) {
             incrementTimeValue()
             emitTimeState(_timeState.longValue)
+            stopwatchNotificationManager?.updateNotification(_timeState.longValue)
             createServiceLog(
                 context = this,
                 message = "Service's running: ${_timeState.longValue}"

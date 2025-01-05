@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ServiceCompat.startForeground
 import androidx.core.content.ContextCompat
 import com.example.stopwatchproject.stopwatch.StopwatchService
 import com.example.stopwatchproject.ui.theme.StopwatchProjectTheme
