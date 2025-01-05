@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">StopwatchProject</string>
+
+    <string name="stopwatch_service_tag">StopwatchService</string>
 </resources>

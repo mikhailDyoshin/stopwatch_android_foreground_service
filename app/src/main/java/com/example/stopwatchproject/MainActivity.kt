@@ -13,23 +13,33 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.stopwatchproject.stopwatch.StopwatchService
 import com.example.stopwatchproject.ui.theme.StopwatchProjectTheme
 
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val viewModel = StopwatchViewModel(StopwatchStateFlowRepository)
+
         enableEdgeToEdge()
         setContent {
             StopwatchProjectTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+
                     Greeting(
+                        state = viewModel.state.collectAsState().value,
                         modifier = Modifier.padding(innerPadding),
                         startService = {
                             startService(Intent(this, StopwatchService::class.java))
+                        },
+                        stopService = {
+                            stopService(Intent(this, StopwatchService::class.java))
                         }
                     )
                 }
@@ -39,15 +49,24 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(modifier: Modifier = Modifier, startService: () -> Unit) {
+fun Greeting(
+    state: Long,
+    modifier: Modifier = Modifier,
+    startService: () -> Unit,
+    stopService: () -> Unit
+) {
 
     Column(
         modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Text(text = state.toString())
         Button(onClick = { startService() }) {
             Text(text = "Start Service")
+        }
+        Button(onClick = { stopService() }) {
+            Text(text = "Stop Service")
         }
     }
 }
@@ -56,6 +75,6 @@ fun Greeting(modifier: Modifier = Modifier, startService: () -> Unit) {
 @Composable
 fun GreetingPreview() {
     StopwatchProjectTheme {
-        Greeting(startService = {})
+        Greeting(state = 0, startService = {}, stopService = {})
     }
 }

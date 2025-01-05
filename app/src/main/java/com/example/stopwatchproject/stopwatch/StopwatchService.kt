@@ -9,28 +9,31 @@ import android.os.Looper
 import android.os.Message
 import android.os.Process.THREAD_PRIORITY_BACKGROUND
 import android.widget.Toast
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import com.example.stopwatchproject.StopwatchStateFlowRepository
+import com.example.stopwatchproject.common.createServiceLog
 
 class StopwatchService : Service() {
 
     private var serviceLooper: Looper? = null
     private var serviceHandler: ServiceHandler? = null
 
+    private val isRunning = mutableStateOf(false)
+
+    private val _timeState = mutableLongStateOf(0L)
+
     // Handler that receives messages from the thread
     private inner class ServiceHandler(looper: Looper) : Handler(looper) {
 
         override fun handleMessage(msg: Message) {
-            // Normally we would do some work here, like download a file.
-            // For our sample, we just sleep for 5 seconds.
             try {
-                Thread.sleep(5000)
+                setIsRunningValue(true)
+                incrementTime()
             } catch (e: InterruptedException) {
                 // Restore interrupt status.
                 Thread.currentThread().interrupt()
             }
-
-            // Stop the service using the startId, so that we don't stop
-            // the service in the middle of handling another job
-            stopSelf(msg.arg1)
         }
     }
 
@@ -46,10 +49,12 @@ class StopwatchService : Service() {
             serviceLooper = looper
             serviceHandler = ServiceHandler(looper)
         }
+        createServiceLog(context = this, message = "Service created")
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show()
+        createServiceLog(context = this, message = "Service started")
 
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job
@@ -67,6 +72,38 @@ class StopwatchService : Service() {
     }
 
     override fun onDestroy() {
+        setIsRunningValue(false)
+        resetTime()
+        emitTimeState()
         Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show()
+        createServiceLog(context = this, message = "Service destroyed")
+    }
+
+    private fun incrementTime() {
+        while (isRunning.value) {
+            Thread.sleep(1000)
+            incrementTimeValue()
+            emitTimeState()
+            createServiceLog(
+                context = this,
+                message = "Service's running: ${_timeState.longValue}"
+            )
+        }
+    }
+
+    private fun emitTimeState() {
+        StopwatchStateFlowRepository.updateTime(_timeState.longValue)
+    }
+
+    private fun setIsRunningValue(value: Boolean) {
+        isRunning.value = value
+    }
+
+    private fun resetTime() {
+        _timeState.longValue = 0L
+    }
+
+    private fun incrementTimeValue() {
+        _timeState.longValue += 1
     }
 }
