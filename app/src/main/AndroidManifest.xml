@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION"/>
 
     <application
         android:allowBackup="true"
@@ -29,8 +28,7 @@
 
         <service
             android:name=".stopwatch.StopwatchService"
-            android:exported="false"
-            android:foregroundServiceType="mediaProjection" />
+            android:exported="false"/>
     </application>
 
 </manifest>
