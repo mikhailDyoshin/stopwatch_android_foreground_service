@@ -98,14 +98,15 @@ class StopwatchService : Service() {
     }
 
     private fun incrementTime() {
+        Thread.sleep(1000)
         while (isRunning.value) {
-            Thread.sleep(1000)
             incrementTimeValue()
             emitTimeState(_timeState.longValue)
             createServiceLog(
                 context = this,
                 message = "Service's running: ${_timeState.longValue}"
             )
+            Thread.sleep(1000)
         }
     }
 
