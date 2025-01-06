@@ -22,6 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.stopwatchproject.presentation.stopwatchScreen.StopwatchViewModel
+import com.example.stopwatchproject.presentation.stopwatchScreen.state.ButtonState
+import com.example.stopwatchproject.presentation.stopwatchScreen.state.StopwatchScreenState
 import com.example.stopwatchproject.stopwatch.StopwatchService
 import com.example.stopwatchproject.ui.theme.StopwatchProjectTheme
 
@@ -33,7 +36,7 @@ class MainActivity : ComponentActivity() {
 
         checkNotificationPermission()
 
-        val viewModel = StopwatchViewModel(StopwatchStateFlowRepository)
+        val viewModel = StopwatchViewModel()
 
         enableEdgeToEdge()
         setContent {
@@ -80,7 +83,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(
-    state: Long,
+    state: StopwatchScreenState,
     modifier: Modifier = Modifier,
     startService: () -> Unit,
     stopService: () -> Unit
@@ -91,12 +94,14 @@ fun Greeting(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = state.toString())
-        Button(onClick = { startService() }) {
-            Text(text = "Start Service")
-        }
-        Button(onClick = { stopService() }) {
-            Text(text = "Stop Service")
+        Text(text = state.titleText)
+        Button(onClick = {
+            when (state.buttonState) {
+                ButtonState.ACTIVE -> stopService()
+                ButtonState.IDLE -> startService()
+            }
+        }) {
+            Text(text = state.buttonState.buttonText)
         }
     }
 }
@@ -105,6 +110,6 @@ fun Greeting(
 @Composable
 fun GreetingPreview() {
     StopwatchProjectTheme {
-        Greeting(state = 0, startService = {}, stopService = {})
+        Greeting(state = StopwatchScreenState(), startService = {}, stopService = {})
     }
 }

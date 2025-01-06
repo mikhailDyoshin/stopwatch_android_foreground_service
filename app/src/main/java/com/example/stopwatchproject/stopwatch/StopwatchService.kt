@@ -20,6 +20,7 @@ import com.example.stopwatchproject.StopwatchNotificationManager
 import com.example.stopwatchproject.StopwatchNotificationManager.Companion.NOTIFICATION_ID
 import com.example.stopwatchproject.StopwatchStateFlowRepository
 import com.example.stopwatchproject.common.createServiceLog
+import com.example.stopwatchproject.stopwatch.state.StopwatchState
 
 class StopwatchService : Service() {
     private val context = this
@@ -49,6 +50,7 @@ class StopwatchService : Service() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                 && e is ForegroundServiceStartNotAllowedException
             ) {
+                emitStopwatchState(StopwatchState.Error(message = "Can't start service"))
                 Toast.makeText(this, "Can't start service", Toast.LENGTH_SHORT).show()
             }
         }
@@ -62,9 +64,11 @@ class StopwatchService : Service() {
                 stopwatchNotificationManager?.setUpNotification()
                 setIsRunningValue(true)
                 startForeground()
+                emitStopwatchState(StopwatchState.Started)
                 incrementTime()
             } catch (e: InterruptedException) {
                 // Restore interrupt status.
+                emitStopwatchState(StopwatchState.Error(message = "InterruptedException occurred: $e"))
                 createServiceLog(
                     context = context,
                     message = "Exception occurred: $e"
@@ -102,7 +106,7 @@ class StopwatchService : Service() {
             return START_NOT_STICKY
         }
 
-        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Started", Toast.LENGTH_SHORT).show()
         createServiceLog(context = this, message = "Service started")
 
         // For each start request, send a message to start a job and deliver the
@@ -123,9 +127,10 @@ class StopwatchService : Service() {
     override fun onDestroy() {
         setIsRunningValue(false)
         resetTime()
-        emitTimeState(0L)
+        emitStopwatchState(StopwatchState.Stopped)
+        emitStopwatchState(StopwatchState.Idle)
         stopwatchNotificationManager?.cancel()
-        Toast.makeText(this, "service done", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Stopped", Toast.LENGTH_SHORT).show()
         createServiceLog(context = this, message = "Service destroyed")
     }
 
@@ -133,7 +138,7 @@ class StopwatchService : Service() {
         Thread.sleep(1000)
         while (isRunning.value) {
             incrementTimeValue()
-            emitTimeState(_timeState.longValue)
+            emitStopwatchState(StopwatchState.Running(time = _timeState.longValue))
             stopwatchNotificationManager?.updateNotification(_timeState.longValue)
             createServiceLog(
                 context = this,
@@ -143,8 +148,8 @@ class StopwatchService : Service() {
         }
     }
 
-    private fun emitTimeState(timeValue: Long) {
-        StopwatchStateFlowRepository.updateTime(timeValue)
+    private fun emitStopwatchState(state: StopwatchState) {
+        StopwatchStateFlowRepository.updateState(state)
     }
 
     private fun setIsRunningValue(value: Boolean) {

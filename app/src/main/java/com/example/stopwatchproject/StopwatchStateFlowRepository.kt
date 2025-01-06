@@ -1,13 +1,15 @@
 package com.example.stopwatchproject
 
+import com.example.stopwatchproject.stopwatch.state.StopwatchState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 object StopwatchStateFlowRepository {
-    private val _stopwatchState = MutableStateFlow(0L)
-    val stopwatchState: StateFlow<Long> get() = _stopwatchState
+    private val _stopwatchState: MutableStateFlow<StopwatchState> =
+        MutableStateFlow(StopwatchState.Idle)
+    val stopwatchState: StateFlow<StopwatchState> get() = _stopwatchState
 
-    fun updateTime(seconds: Long) {
-        _stopwatchState.value = seconds
+    fun updateState(newState: StopwatchState) {
+        _stopwatchState.value = newState
     }
 }
