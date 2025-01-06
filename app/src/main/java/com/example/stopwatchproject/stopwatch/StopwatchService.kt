@@ -1,10 +1,10 @@
 package com.example.stopwatchproject.stopwatch
 
+import android.annotation.SuppressLint
 import android.app.ForegroundServiceStartNotAllowedException
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
-import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
 import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
@@ -23,6 +23,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+@SuppressLint("ForegroundServiceType")
 class StopwatchService : Service() {
     private val context = this
 
@@ -41,6 +42,7 @@ class StopwatchService : Service() {
         }.launchIn(scope)
     }
 
+
     private fun startForeground() {
 
         try {
@@ -51,7 +53,7 @@ class StopwatchService : Service() {
                     this,
                     NOTIFICATION_ID,
                     notification,
-                    FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION
+                    0
                 )
             }
         } catch (e: Exception) {

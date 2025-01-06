@@ -30,7 +30,6 @@
 
         <service
             android:name=".stopwatch.StopwatchService"
-            android:foregroundServiceType="mediaProjection"
             android:exported="false"/>
     </application>
 
