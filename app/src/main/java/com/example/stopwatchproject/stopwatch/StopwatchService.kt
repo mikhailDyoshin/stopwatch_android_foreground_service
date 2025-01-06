@@ -21,6 +21,7 @@ import com.example.stopwatchproject.StopwatchNotificationManager.Companion.NOTIF
 import com.example.stopwatchproject.StopwatchStateFlowRepository
 import com.example.stopwatchproject.common.createServiceLog
 import com.example.stopwatchproject.stopwatch.state.StopwatchState
+import java.util.Timer
 
 class StopwatchService : Service() {
     private val context = this
@@ -50,7 +51,7 @@ class StopwatchService : Service() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                 && e is ForegroundServiceStartNotAllowedException
             ) {
-                emitStopwatchState(StopwatchState.Error(message = "Can't start service"))
+//                emitStopwatchState(StopwatchState.Error(message = "Can't start service"))
                 Toast.makeText(this, "Can't start service", Toast.LENGTH_SHORT).show()
             }
         }
@@ -62,13 +63,14 @@ class StopwatchService : Service() {
         override fun handleMessage(msg: Message) {
             try {
                 stopwatchNotificationManager?.setUpNotification()
-                setIsRunningValue(true)
+//                setIsRunningValue(true)
                 startForeground()
-                emitStopwatchState(StopwatchState.Started)
-                incrementTime()
+                Stopwatch.start()
+//                emitStopwatchState(StopwatchState.Started)
+//                incrementTime()
             } catch (e: InterruptedException) {
                 // Restore interrupt status.
-                emitStopwatchState(StopwatchState.Error(message = "InterruptedException occurred: $e"))
+//                emitStopwatchState(StopwatchState.Error(message = "InterruptedException occurred: $e"))
                 createServiceLog(
                     context = context,
                     message = "Exception occurred: $e"
@@ -79,6 +81,8 @@ class StopwatchService : Service() {
     }
 
     override fun onCreate() {
+        Stopwatch.setUp()
+//        emitStopwatchState(StopwatchState.Idle)
         // Start up the thread running the service.  Note that we create a
         // separate thread because the service normally runs in the process's
         // main thread, which we don't want to block.  We also make it
@@ -125,42 +129,42 @@ class StopwatchService : Service() {
     }
 
     override fun onDestroy() {
-        setIsRunningValue(false)
-        resetTime()
-        emitStopwatchState(StopwatchState.Stopped)
-        emitStopwatchState(StopwatchState.Idle)
+//        setIsRunningValue(false)
+//        resetTime()
+//        emitStopwatchState(StopwatchState.Stopped)
+        Stopwatch.stop()
         stopwatchNotificationManager?.cancel()
         Toast.makeText(this, "Stopped", Toast.LENGTH_SHORT).show()
         createServiceLog(context = this, message = "Service destroyed")
     }
 
-    private fun incrementTime() {
-        Thread.sleep(1000)
-        while (isRunning.value) {
-            incrementTimeValue()
-            emitStopwatchState(StopwatchState.Running(time = _timeState.longValue))
-            stopwatchNotificationManager?.updateNotification(_timeState.longValue)
-            createServiceLog(
-                context = this,
-                message = "Service's running: ${_timeState.longValue}"
-            )
-            Thread.sleep(1000)
-        }
-    }
+//    private fun incrementTime() {
+//        Thread.sleep(1000)
+//        while (isRunning.value) {
+//            incrementTimeValue()
+//            emitStopwatchState(StopwatchState.Running(time = _timeState.longValue))
+//            stopwatchNotificationManager?.updateNotification(_timeState.longValue)
+//            createServiceLog(
+//                context = this,
+//                message = "Service's running: ${_timeState.longValue}"
+//            )
+//            Thread.sleep(1000)
+//        }
+//    }
 
-    private fun emitStopwatchState(state: StopwatchState) {
-        StopwatchStateFlowRepository.updateState(state)
-    }
+//    private fun emitStopwatchState(state: StopwatchState) {
+//        StopwatchStateFlowRepository.updateState(state)
+//    }
 
-    private fun setIsRunningValue(value: Boolean) {
-        isRunning.value = value
-    }
+//    private fun setIsRunningValue(value: Boolean) {
+//        isRunning.value = value
+//    }
 
-    private fun resetTime() {
-        _timeState.longValue = 0L
-    }
-
-    private fun incrementTimeValue() {
-        _timeState.longValue += 1
-    }
+//    private fun resetTime() {
+//        _timeState.longValue = 0L
+//    }
+//
+//    private fun incrementTimeValue() {
+//        _timeState.longValue += 1
+//    }
 }
