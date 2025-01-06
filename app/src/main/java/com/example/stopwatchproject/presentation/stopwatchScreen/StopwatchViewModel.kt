@@ -3,6 +3,7 @@ package com.example.stopwatchproject.presentation.stopwatchScreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.stopwatchproject.StopwatchStateFlowRepository
+import com.example.stopwatchproject.common.MilitaryTime
 import com.example.stopwatchproject.presentation.stopwatchScreen.state.ButtonState
 import com.example.stopwatchproject.presentation.stopwatchScreen.state.StopwatchScreenState
 import com.example.stopwatchproject.stopwatch.state.StopwatchState
@@ -22,18 +23,32 @@ class StopwatchViewModel : ViewModel() {
     private fun mapToStopwatchScreenState(stopwatchState: StopwatchState): StopwatchScreenState {
         return when (stopwatchState) {
             is StopwatchState.Error -> StopwatchScreenState(
-                titleText = stopwatchState.message,
+                titleState = stopwatchState.message,
                 buttonState = ButtonState.IDLE
             )
 
-            StopwatchState.Idle -> StopwatchScreenState(titleText = "0", buttonState = ButtonState.IDLE)
+            StopwatchState.Idle -> StopwatchScreenState(
+                titleState = MilitaryTime.secondsToMilitaryTime(
+                    0L
+                ).toString(), buttonState = ButtonState.IDLE
+            )
+
             is StopwatchState.Running -> StopwatchScreenState(
-                titleText = stopwatchState.time.toString(),
+                titleState = MilitaryTime.secondsToMilitaryTime(stopwatchState.time).toString(),
                 buttonState = ButtonState.ACTIVE
             )
 
-            StopwatchState.Started -> StopwatchScreenState(titleText = "0", buttonState = ButtonState.ACTIVE)
-            StopwatchState.Stopped -> StopwatchScreenState(titleText = "0", buttonState = ButtonState.IDLE)
+            StopwatchState.Started -> StopwatchScreenState(
+                titleState = MilitaryTime.secondsToMilitaryTime(
+                    0L
+                ).toString(), buttonState = ButtonState.ACTIVE
+            )
+
+            StopwatchState.Stopped -> StopwatchScreenState(
+                titleState = MilitaryTime.secondsToMilitaryTime(
+                    0L
+                ).toString(), buttonState = ButtonState.IDLE
+            )
         }
     }
 

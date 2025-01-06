@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.example.stopwatchproject.common.MilitaryTime
 import com.example.stopwatchproject.stopwatch.StopwatchService
 
 class StopwatchNotificationManager(
@@ -22,7 +23,7 @@ class StopwatchNotificationManager(
     }
 
     fun updateNotification(timeValue: Long) {
-        notificationBuilder.setContentTitle("Elapsed time: $timeValue s.")
+        notificationBuilder.setContentTitle("Elapsed time: ${MilitaryTime.secondsToMilitaryTime(timeValue)}")
         updateNotification()
     }
 

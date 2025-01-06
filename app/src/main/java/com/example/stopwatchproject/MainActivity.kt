@@ -94,7 +94,7 @@ fun Greeting(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = state.titleText)
+        Text(text = state.titleState)
         Button(onClick = {
             when (state.buttonState) {
                 ButtonState.ACTIVE -> stopService()
