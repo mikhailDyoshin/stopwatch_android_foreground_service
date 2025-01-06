@@ -18,7 +18,10 @@ class StateUpdater(
 
     private val extendedCallback = object : Choreographer.FrameCallback {
         override fun doFrame(frameTimeNanos: Long) {
+            // Execute client's callback
             callBack()
+
+            // Recursively post this callback
             choreographer.postFrameCallbackDelayed(this, updatePeriodMillis)
         }
     }
