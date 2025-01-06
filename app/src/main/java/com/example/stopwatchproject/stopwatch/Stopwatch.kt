@@ -18,28 +18,24 @@ object Stopwatch {
     private val stateUpdater = StateUpdater(
         callBack = {
             incrementTime()
-            _state.tryEmit(
-                StopwatchState.Running(
-                    time = timeInSecondsState.longValue
-                )
-            )
+            _state.value = StopwatchState.Running(time = timeInSecondsState.longValue)
         },
         updatePeriodMillis = STOPWATCH_TIME_INTERVAL_IN_MS
     )
 
     fun setUp() {
-        _state.tryEmit(StopwatchState.Idle)
+        _state.value = StopwatchState.Idle
     }
 
     fun start() {
-        _state.tryEmit(StopwatchState.Started)
+        _state.value = StopwatchState.Started
         stateUpdater.start()
     }
 
     fun stop() {
         stateUpdater.stop()
         resetTime()
-        _state.tryEmit(StopwatchState.Stopped)
+        _state.value = StopwatchState.Stopped
     }
 
     private fun incrementTime() {

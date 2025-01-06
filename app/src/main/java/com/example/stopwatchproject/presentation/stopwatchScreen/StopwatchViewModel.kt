@@ -6,6 +6,7 @@ import com.example.stopwatchproject.StopwatchStateFlowRepository
 import com.example.stopwatchproject.common.MilitaryTime
 import com.example.stopwatchproject.presentation.stopwatchScreen.state.ButtonState
 import com.example.stopwatchproject.presentation.stopwatchScreen.state.StopwatchScreenState
+import com.example.stopwatchproject.stopwatch.Stopwatch
 import com.example.stopwatchproject.stopwatch.state.StopwatchState
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -14,7 +15,7 @@ import kotlinx.coroutines.flow.stateIn
 class StopwatchViewModel : ViewModel() {
 
     val state =
-        StopwatchStateFlowRepository.stopwatchState.map { mapToStopwatchScreenState(it) }.stateIn(
+        Stopwatch.state.map { mapToStopwatchScreenState(it) }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(),
             StopwatchScreenState()

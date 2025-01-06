@@ -41,6 +41,7 @@ class StateUpdater(
     The [stop] method stops the loop where client's logic is executed.
      */
     fun stop() {
+        choreographer.removeFrameCallback(extendedCallback)
         isRunning = false
     }
 
