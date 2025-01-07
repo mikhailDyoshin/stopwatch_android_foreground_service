@@ -8,7 +8,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.stopwatchproject.R
-import com.example.stopwatchproject.common.MilitaryTime
+import com.example.stopwatchproject.stopwatch.utils.MilitaryTime
 
 class StopwatchNotificationManager(
     private val context: Context,

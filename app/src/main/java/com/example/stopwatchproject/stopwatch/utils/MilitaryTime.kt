@@ -1,4 +1,4 @@
-package com.example.stopwatchproject.common
+package com.example.stopwatchproject.stopwatch.utils
 
 data class MilitaryTime(val hour: String, val minute: String, val second: String) {
     override fun toString(): String {

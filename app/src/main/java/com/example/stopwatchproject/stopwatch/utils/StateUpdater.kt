@@ -1,4 +1,4 @@
-package com.example.stopwatchproject.common
+package com.example.stopwatchproject.stopwatch.utils
 
 import android.view.Choreographer
 

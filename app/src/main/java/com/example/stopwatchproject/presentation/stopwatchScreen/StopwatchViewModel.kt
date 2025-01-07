@@ -3,7 +3,7 @@ package com.example.stopwatchproject.presentation.stopwatchScreen
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.stopwatchproject.common.MilitaryTime
+import com.example.stopwatchproject.stopwatch.utils.MilitaryTime
 import com.example.stopwatchproject.presentation.stopwatchScreen.state.ButtonState
 import com.example.stopwatchproject.presentation.stopwatchScreen.state.StopwatchScreenState
 import com.example.stopwatchproject.stopwatch.Stopwatch

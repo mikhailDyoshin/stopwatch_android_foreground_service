@@ -15,7 +15,7 @@ import android.os.Process.THREAD_PRIORITY_BACKGROUND
 import android.widget.Toast
 import androidx.core.app.ServiceCompat
 import com.example.stopwatchproject.stopwatch.StopwatchNotificationManager.Companion.NOTIFICATION_ID
-import com.example.stopwatchproject.common.createServiceLog
+import com.example.stopwatchproject.stopwatch.utils.createServiceLog
 import com.example.stopwatchproject.stopwatch.state.StopwatchState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

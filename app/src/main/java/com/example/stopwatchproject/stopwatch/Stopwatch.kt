@@ -1,7 +1,7 @@
 package com.example.stopwatchproject.stopwatch
 
 import androidx.compose.runtime.mutableLongStateOf
-import com.example.stopwatchproject.common.StateUpdater
+import com.example.stopwatchproject.stopwatch.utils.StateUpdater
 import com.example.stopwatchproject.stopwatch.state.StopwatchResultState
 import com.example.stopwatchproject.stopwatch.state.StopwatchState
 import kotlinx.coroutines.flow.MutableStateFlow
