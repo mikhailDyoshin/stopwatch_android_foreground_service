@@ -60,6 +60,7 @@ class StopwatchService : Service() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
                 && e is ForegroundServiceStartNotAllowedException
             ) {
+                Stopwatch.stop(error = e.message)
                 Toast.makeText(this, "Can't start service", Toast.LENGTH_SHORT).show()
             }
         }
@@ -78,6 +79,7 @@ class StopwatchService : Service() {
                     context = context,
                     message = "Exception occurred: $e"
                 )
+                Stopwatch.stop(error = e.message)
                 Thread.currentThread().interrupt()
             }
         }

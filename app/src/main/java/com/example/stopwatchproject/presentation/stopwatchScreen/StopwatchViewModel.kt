@@ -7,6 +7,7 @@ import com.example.stopwatchproject.common.MilitaryTime
 import com.example.stopwatchproject.presentation.stopwatchScreen.state.ButtonState
 import com.example.stopwatchproject.presentation.stopwatchScreen.state.StopwatchScreenState
 import com.example.stopwatchproject.stopwatch.Stopwatch
+import com.example.stopwatchproject.stopwatch.state.StopwatchResultState
 import com.example.stopwatchproject.stopwatch.state.StopwatchState
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -24,11 +25,6 @@ class StopwatchViewModel : ViewModel() {
     private fun mapToStopwatchScreenState(stopwatchState: StopwatchState): StopwatchScreenState {
         Log.d("StopwatchViewModelState", "$stopwatchState")
         return when (stopwatchState) {
-            is StopwatchState.Error -> StopwatchScreenState(
-                titleState = stopwatchState.message,
-                buttonState = ButtonState.IDLE
-            )
-
             StopwatchState.Idle -> StopwatchScreenState(
                 titleState = MilitaryTime.secondsToMilitaryTime(
                     0L
@@ -46,11 +42,19 @@ class StopwatchViewModel : ViewModel() {
                 ).toString(), buttonState = ButtonState.ACTIVE
             )
 
-            StopwatchState.Stopped -> StopwatchScreenState(
-                titleState = MilitaryTime.secondsToMilitaryTime(
-                    0L
-                ).toString(), buttonState = ButtonState.IDLE
-            )
+            is StopwatchState.Stopped -> {
+                when (stopwatchState.result) {
+                    is StopwatchResultState.Error -> StopwatchScreenState(
+                        titleState = stopwatchState.result.message, buttonState = ButtonState.IDLE
+                    )
+
+                    is StopwatchResultState.Success -> StopwatchScreenState(
+                        titleState = MilitaryTime.secondsToMilitaryTime(
+                            0L
+                        ).toString(), buttonState = ButtonState.IDLE
+                    )
+                }
+            }
         }
     }
 

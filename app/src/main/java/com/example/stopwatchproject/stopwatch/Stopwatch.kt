@@ -2,6 +2,7 @@ package com.example.stopwatchproject.stopwatch
 
 import androidx.compose.runtime.mutableLongStateOf
 import com.example.stopwatchproject.common.StateUpdater
+import com.example.stopwatchproject.stopwatch.state.StopwatchResultState
 import com.example.stopwatchproject.stopwatch.state.StopwatchState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,10 +33,21 @@ object Stopwatch {
         stateUpdater.start()
     }
 
-    fun stop() {
+    fun stop(error: String? = null) {
         stateUpdater.stop()
+        _state.value =
+            StopwatchState.Stopped(
+                result = if (error != null) {
+                    StopwatchResultState.Error(
+                        message = error
+                    )
+                } else {
+                    StopwatchResultState.Success(
+                        totalTimeInMinutes = timeInSecondsState.longValue
+                    )
+                }
+            )
         resetTime()
-        _state.value = StopwatchState.Stopped
     }
 
     private fun incrementTime() {
