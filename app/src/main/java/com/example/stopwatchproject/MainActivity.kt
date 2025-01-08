@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.stopwatchproject.presentation.stopwatchScreen.StopwatchScreen
 import com.example.stopwatchproject.presentation.stopwatchScreen.StopwatchViewModel
+import com.example.stopwatchproject.stopwatch.StopwatchNotificationManager.Companion.NOTIFICATION_TITLE_KEY
 import com.example.stopwatchproject.stopwatch.StopwatchService
 import com.example.stopwatchproject.ui.theme.StopwatchProjectTheme
 
@@ -39,7 +40,12 @@ class MainActivity : ComponentActivity() {
                         state = viewModel.state.collectAsState().value,
                         modifier = Modifier.padding(innerPadding),
                         startService = {
-                            val intent = Intent(this, StopwatchService::class.java)
+                            val intent = Intent(this, StopwatchService::class.java).apply {
+                                putExtra(
+                                    NOTIFICATION_TITLE_KEY,
+                                    "Hello"
+                                )
+                            }
                             this.startForegroundService(intent)
                         },
                         stopService = {

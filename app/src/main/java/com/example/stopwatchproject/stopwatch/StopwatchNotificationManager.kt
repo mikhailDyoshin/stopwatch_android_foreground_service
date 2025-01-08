@@ -23,8 +23,8 @@ class StopwatchNotificationManager(
     }
 
     fun updateNotification(timeValue: Long) {
-        notificationBuilder.setContentTitle("Elapsed time: ${MilitaryTime.secondsToMilitaryTime(timeValue)}")
-        updateNotification()
+        notificationBuilder.setContentText("Elapsed time: ${MilitaryTime.secondsToMilitaryTime(timeValue)}")
+        displayNotification()
     }
 
     fun cancel() {
@@ -54,7 +54,7 @@ class StopwatchNotificationManager(
         }
     }
 
-    private fun updateNotification() {
+    private fun displayNotification() {
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build())
     }
 
@@ -64,15 +64,16 @@ class StopwatchNotificationManager(
 
         notificationBuilder
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setContentTitle("Elapsed time: $timeValue s.")
+            .setContentText("Elapsed time: $timeValue s.")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .addAction(R.drawable.ic_launcher_foreground, "Stop", stopIntent)
             .setPriority(NotificationCompat.PRIORITY_LOW)
 
-        updateNotification()
+        displayNotification()
     }
 
     companion object {
+        const val NOTIFICATION_TITLE_KEY = "NotificationTitle"
         const val NOTIFICATION_ID = 123
         private const val CHANNEL_ID = "PlaybackServiceChannel"
     }

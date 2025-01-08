@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.IBinder
@@ -15,6 +16,7 @@ import android.os.Process.THREAD_PRIORITY_BACKGROUND
 import android.widget.Toast
 import androidx.core.app.ServiceCompat
 import com.example.stopwatchproject.stopwatch.StopwatchNotificationManager.Companion.NOTIFICATION_ID
+import com.example.stopwatchproject.stopwatch.StopwatchNotificationManager.Companion.NOTIFICATION_TITLE_KEY
 import com.example.stopwatchproject.stopwatch.utils.createServiceLog
 import com.example.stopwatchproject.stopwatch.state.StopwatchState
 import kotlinx.coroutines.CoroutineScope
@@ -43,10 +45,11 @@ class StopwatchService : Service() {
     }
 
 
-    private fun startForeground() {
+    private fun startForeground(notificationTitle: String) {
 
         try {
-            val notification = stopwatchNotificationManager?.getNotificationBuilder()?.build()
+            val notification = stopwatchNotificationManager?.getNotificationBuilder()
+                ?.setContentTitle(notificationTitle)?.build()
 
             if (notification != null) {
                 ServiceCompat.startForeground(
@@ -72,7 +75,7 @@ class StopwatchService : Service() {
         override fun handleMessage(msg: Message) {
             try {
                 stopwatchNotificationManager?.setUpNotification()
-                startForeground()
+                startForeground(notificationTitle = msg.data.getString(NOTIFICATION_TITLE_KEY) ?: "No data")
                 Stopwatch.start()
             } catch (e: InterruptedException) {
                 createServiceLog(
@@ -114,10 +117,15 @@ class StopwatchService : Service() {
         Toast.makeText(this, "Started", Toast.LENGTH_SHORT).show()
         createServiceLog(context = this, message = "Service started")
 
+        // Bundle to transfer title-string from the intent (sent from activity) to the notification
+        val bundle = Bundle()
+        bundle.putString(NOTIFICATION_TITLE_KEY, intent.getStringExtra(NOTIFICATION_TITLE_KEY))
+
         // For each start request, send a message to start a job and deliver the
         // start ID so we know which request we're stopping when we finish the job
         serviceHandler?.obtainMessage()?.also { msg ->
             msg.arg1 = startId
+            msg.data = bundle
             serviceHandler?.sendMessage(msg)
         }
 
